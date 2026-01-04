@@ -33,11 +33,11 @@
 
 ### 1. 修改 `configuration.yaml`
 
-将本项目提供的 `configuration.yaml` 内容复制到你的配置文件中。
+将本项目提供的 `panasonic_erv.yaml` 内容复制到你的配置文件中。
 
 > ⚠️ **注意**：请务必修改 `host` 字段为你实际的串口服务器 IP 地址。
 > 
-### 2. 配置自动化 (automations.yaml)
+### 2. 修改 `automations.yaml`
 
 将 automations.yaml 中的内容复制到你的自动化配置文件中。
 
