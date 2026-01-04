@@ -1,0 +1,195 @@
+views:
+  - title: 概览
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: 新风系统控制
+            heading_style: title
+            icon: mdi:fan-auto
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.panasonic_erv_power
+            name: 新风电源
+            icon: mdi:fan
+            color: cyan
+            show_entity_picture: false
+            hide_state: false
+            state_content: state
+            vertical: false
+            tap_action:
+              action: none
+            icon_tap_action:
+              action: none
+            features:
+              - type: toggle
+            features_position: inline
+          - type: custom:mini-graph-card
+            name: 室内PM2.5 24小时趋势
+            icon: mdi:chart-line
+            entities:
+              - entity: sensor.panasonic_erv_pm2_5
+                name: PM2.5
+            height: 120
+            hours_to_show: 24
+            points_per_hour: 8
+            line_width: 3
+            smooth: true
+            animate: true
+            show:
+              fill: fade
+              points: hover
+              legend: false
+            color_thresholds:
+              - value: 0
+                color: '#00c853'
+              - value: 5
+                color: '#ffc107'
+              - value: 15
+                color: '#f44336'
+          - type: custom:mushroom-select-card
+            entity: input_select.panasonic_erv_mode
+            name: 运行模式
+            icon: mdi:cog
+            icon_color: blue
+            layout: horizontal
+            fill_container: false
+            secondary_info: state
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:mushroom-select-card
+            entity: input_select.panasonic_erv_speed
+            name: 风量设定
+            icon: mdi:fan-speed-1
+            icon_color: cyan
+            layout: horizontal
+            fill_container: true
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-select-card
+                entity: input_select.panasonic_erv_pressure_mode
+                name: 正压设定
+                fill_container: false
+                layout: horizontal
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                secondary_info: none
+                icon_color: purple
+              - type: conditional
+                conditions:
+                  - entity: input_select.panasonic_erv_pressure_mode
+                    state: 正压模式
+                card:
+                  type: custom:mushroom-select-card
+                  entity: input_select.panasonic_erv_pressure_level
+                  name: 正压强度
+                  layout: horizontal
+                  secondary_info: none
+                  icon_color: purple
+              - type: conditional
+                conditions:
+                  - entity: input_select.panasonic_erv_pressure_mode
+                    state: 标准模式
+                card:
+                  type: custom:mushroom-template-card
+                  primary: 标准模式下正压强度不可用
+                  secondary: ''
+                  icon: mdi:information-outline
+                  icon_color: grey
+                  layout: horizontal
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:mushroom-entity-card
+            entity: switch.panasonic_erv_vacation_mode
+            name: 度假模式
+            icon: mdi:beach
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: switch.panasonic_erv_high_pressure
+            name: 高静压设定
+            icon_color: red
+            icon: mdi:speedometer
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: toggle
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: sensor.panasonic_filter_clean_remaining_2
+            name: 滤网清洁剩余
+            icon: mdi:broom
+            fill_container: true
+            grid_options:
+              columns: 12
+              rows: 1
+            layout: horizontal
+            secondary_info: state
+            tap_action:
+              action: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_color: amber
+          - type: entities
+            entities:
+              - entity: sensor.panasonic_pre_filter_change_remaining
+                name: 初效滤网更换剩余
+                icon: mdi:air-filter
+              - entity: sensor.panasonic_filter_change_remaining_2
+                name: 新风集尘滤网更换剩余
+                icon: mdi:air-filter
+              - entity: sensor.panasonic_supply_filter_change_remaining
+                name: 送风集尘/回风滤网更换剩余
+                icon: mdi:air-filter
+            state_color: false
+            show_header_toggle: false
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: entities
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: sensor.panasonic_erv_error_code
+                name: 设备异常状态码(0=正常)
+                icon: mdi:alert-circle-outline
+            visibility:
+              - condition: numeric_state
+                entity: input_select.panasonic_erv_mode
+                above: 0
+                below: 0
+            grid_options:
+              rows: auto
+        column_span: 1

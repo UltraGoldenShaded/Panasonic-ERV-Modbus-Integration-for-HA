@@ -1,0 +1,200 @@
+modbus:
+  - name: panasonic_ventilation
+    type: rtuovertcp  
+    host: #这里填写串口服务器的实际IP地址
+    port: 8899
+    timeout: 3
+    delay: 3
+
+    sensors:
+      # 0x0072
+      - name: "Panasonic ERV PM2.5"
+        unique_id: panasonic_erv_pm25
+        slave: 1
+        address: 114
+        input_type: holding
+        unit_of_measurement: "µg/m³"
+        state_class: measurement
+        scan_interval: 60
+        
+      # 0x0058
+      - name: "Panasonic Filter Clean Remaining Hours"
+        unique_id: panasonic_erv_filter_clean_hours
+        slave: 1
+        address: 88
+        input_type: holding
+        unit_of_measurement: "h"
+        state_class: measurement
+        scan_interval: 36000
+        
+      # 0x0060
+      - name: "Panasonic Filter Change Remaining Hours"
+        unique_id: panasonic_erv_filter_change_hours
+        slave: 1
+        address: 96
+        input_type: holding
+        unit_of_measurement: "h"
+        state_class: measurement
+        scan_interval: 36000
+        
+      # 0x0061
+      - name: "Panasonic Pre Filter Change Remaining Hours"
+        unique_id: panasonic_erv_pre_filter_change_hours
+        slave: 1
+        address: 97
+        input_type: holding
+        unit_of_measurement: "h"
+        state_class: measurement
+        scan_interval: 36000
+        
+      # 0x0062
+      - name: "Panasonic Supply Filter Change Remaining Hours"
+        unique_id: panasonic_erv_supply_filter_change_hours
+        slave: 1
+        address: 98
+        input_type: holding
+        unit_of_measurement: "h"
+        state_class: measurement
+        scan_interval: 360000
+        
+      # 0x0056
+      - name: "Panasonic ERV Error Code"
+        unique_id: panasonic_erv_error
+        slave: 1
+        address: 86
+        input_type: holding
+        scan_interval: 360
+      # 0x0021
+      - name: "Panasonic ERV Mode Status"
+        slave: 1
+        address: 33
+        input_type: holding
+        scan_interval: 31  # 状态每30秒更新
+        
+      # 0x0022
+      - name: "Panasonic ERV Speed Status"
+        slave: 1
+        address: 34
+        input_type: holding
+        scan_interval: 37
+        
+      # 0x0025
+      - name: "Panasonic ERV Pressure Mode Status"
+        slave: 1
+        address: 37
+        input_type: holding
+        scan_interval: 41
+        
+      # 0x0026
+      - name: "Panasonic ERV Pressure Level Status"
+        slave: 1
+        address: 38
+        input_type: holding
+        scan_interval: 43
+
+    switches:
+      # 0x0020
+      - name: "Panasonic ERV Power"
+        unique_id: panasonic_erv_power
+        slave: 1
+        address: 32
+        write_type: holding
+        command_on: 1
+        command_off: 0
+        scan_interval: 47
+        verify:
+            input_type: holding
+            address: 32
+            state_on: 1
+            state_off: 0
+            
+      # 0x0027
+      - name: "Panasonic ERV Vacation Mode"
+        unique_id: panasonic_erv_vacation
+        slave: 1
+        address: 39
+        write_type: holding
+        command_on: 1
+        command_off: 0
+        scan_interval: 60
+        
+      # 0x0030
+      - name: "Panasonic ERV High Pressure"
+        unique_id: panasonic_erv_high_pressure
+        slave: 1
+        address: 48
+        write_type: holding
+        command_on: 1
+        command_off: 0
+        scan_interval: 60
+
+input_select:
+  panasonic_erv_mode:
+    name: "新风运行模式"
+    options:
+      - "热交换"
+      - "内循环"
+      - "消毒"
+      - "自动"
+    icon: mdi:air-filter
+    
+  panasonic_erv_speed:
+    name: "新风风量"
+    options:
+      - "低噪音"
+      - "弱"
+      - "强"
+    icon: mdi:fan
+    
+  panasonic_erv_pressure_mode:
+    name: "正压设定"
+    options:
+      - "标准模式"
+      - "正压模式"
+    icon: mdi:gauge
+    
+  panasonic_erv_pressure_level:
+    name: "正压模式强度"
+    options:
+      - "弱"
+      - "中"
+      - "强"
+    icon: mdi:gauge-full
+
+template:
+  - sensor:
+      - name: "Panasonic Filter Clean Remaining"
+        unique_id: panasonic_erv_filter_clean_days
+        unit_of_measurement: "天"
+        state_class: measurement
+        icon: mdi:broom
+        state: >
+          {% set hours = states('sensor.panasonic_filter_clean_remaining_hours') | float(0) %}
+          {{ (hours / 24) | round(0) | int }}
+
+      - name: "Panasonic Filter Change Remaining"
+        unique_id: panasonic_erv_filter_change_days
+        unit_of_measurement: "天"
+        state_class: measurement
+        icon: mdi:air-filter
+        state: >
+          {% set hours = states('sensor.panasonic_filter_change_remaining_hours') | float(0) %}
+          {{ (hours / 24) | round(0) | int }}
+
+      - name: "Panasonic Pre Filter Change Remaining"
+        unique_id: panasonic_erv_pre_filter_change_days
+        unit_of_measurement: "天"
+        state_class: measurement
+        icon: mdi:air-filter
+        state: >
+          {% set hours = states('sensor.panasonic_pre_filter_change_remaining_hours') | float(0) %}
+          {{ (hours / 24) | round(0) | int }}
+
+      - name: "Panasonic Supply Filter Change Remaining"
+        unique_id: panasonic_erv_supply_filter_change_days
+        unit_of_measurement: "天"
+        state_class: measurement
+        icon: mdi:air-filter
+        state: >
+          {% set hours = states('sensor.panasonic_supply_filter_change_remaining_hours') | float(0) %}
+          {{ (hours / 24) | round(0) | int }}

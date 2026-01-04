@@ -1,0 +1,119 @@
+- alias: Panasonic ERV Set Mode
+  trigger:
+  - platform: state
+    entity_id: input_select.panasonic_erv_mode
+  action:
+  - service: modbus.write_register
+    data:
+      hub: panasonic_ventilation
+      unit: 1
+      address: 33
+      value: '{% set mode = states(''input_select.panasonic_erv_mode'') %} {% if mode
+        == "热交换" %} 0 {% elif mode == "内循环" %} 2 {% elif mode == "消毒" %} 3 {% elif
+        mode == "自动" %} 4 {% else %} 0 {% endif %}'
+
+- alias: Panasonic ERV Set Speed
+  trigger:
+  - platform: state
+    entity_id: input_select.panasonic_erv_speed
+  action:
+  - service: modbus.write_register
+    data:
+      hub: panasonic_ventilation
+      unit: 1
+      address: 34
+      value: '{% set speed = states(''input_select.panasonic_erv_speed'') %} {% if
+        speed == "低噪音" %} 1 {% elif speed == "弱" %} 2 {% elif speed == "强" %} 3 {% else %} 2 {% endif %}'
+
+- alias: Panasonic ERV Set Pressure Mode
+  trigger:
+  - platform: state
+    entity_id: input_select.panasonic_erv_pressure_mode
+  action:
+  - service: modbus.write_register
+    data:
+      hub: panasonic_ventilation
+      unit: 1
+      address: 37
+      value: '{% set mode = states(''input_select.panasonic_erv_pressure_mode'') %}
+        {% if mode == "标准模式" %} 0 {% elif mode == "正压模式" %} 1 {% else %} 0
+        {% endif %}'
+
+- alias: Panasonic ERV Set Pressure Level
+  trigger:
+  - platform: state
+    entity_id: input_select.panasonic_erv_pressure_level
+  condition:
+  - condition: state
+    entity_id: input_select.panasonic_erv_pressure_mode
+    state: 正压模式
+  action:
+  - service: modbus.write_register
+    data:
+      hub: panasonic_ventilation
+      unit: 1
+      address: 38
+      value: '{% set level = states(''input_select.panasonic_erv_pressure_level'')
+        %} {% if level == "弱" %} 1 {% elif level == "中" %} 2 {% elif level
+        == "强" %} 3 {% else %} 2 {% endif %}'
+
+- alias: Panasonic ERV Sync Status from Device
+  trigger:
+  - platform: state
+    entity_id: sensor.panasonic_erv_mode_status
+  - platform: state
+    entity_id: sensor.panasonic_erv_speed_status
+  - platform: state
+    entity_id: sensor.panasonic_erv_pressure_mode_status
+  - platform: state
+    entity_id: sensor.panasonic_erv_pressure_level_status
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.entity_id == ''sensor.panasonic_erv_mode_status''
+          }}'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.panasonic_erv_mode
+        data:
+          option: '{% set val = states(''sensor.panasonic_erv_mode_status'')|int %}
+            {% if val == 0 %} 热交换 {% elif val == 2 %} 内循环 {% elif val == 3 %} 消毒 {%
+            elif val == 4 %} 自动 {% else %} 热交换 {% endif %}'
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.entity_id == ''sensor.panasonic_erv_speed_status''
+          }}'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.panasonic_erv_speed
+        data:
+          option: '{% set val = states(''sensor.panasonic_erv_speed_status'')|int
+            %} {% if val == 1 %} 低噪音 {% elif val == 2 %} 弱 {% elif val ==
+            3 %} 强 {% else %} 弱 {% endif %}'
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.entity_id == ''sensor.panasonic_erv_pressure_mode_status''
+          }}'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.panasonic_erv_pressure_mode
+        data:
+          option: '{% set val = states(''sensor.panasonic_erv_pressure_mode_status'')|int
+            %} {% if val == 0 %} 标准模式 {% elif val == 1 %} 正压模式 {% else %}
+            标准模式 {% endif %}'
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.entity_id == ''sensor.panasonic_erv_pressure_level_status''
+          }}'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.panasonic_erv_pressure_level
+        data:
+          option: '{% set val = states(''sensor.panasonic_erv_pressure_level_status'')|int
+            %} {% if val == 1 %} 弱 {% elif val == 2 %} 中 {% elif val ==
+            3 %} 强 {% else %} 中 {% endif %}'
