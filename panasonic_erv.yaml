@@ -64,8 +64,10 @@ modbus:
         address: 86
         input_type: holding
         scan_interval: 360
+        
       # 0x0021
       - name: "Panasonic ERV Mode Status"
+        unique_id: panasonic_erv_mode_status
         slave: 1
         address: 33
         input_type: holding
@@ -73,6 +75,7 @@ modbus:
         
       # 0x0022
       - name: "Panasonic ERV Speed Status"
+        unique_id: panasonic_erv_speed_status
         slave: 1
         address: 34
         input_type: holding
@@ -80,6 +83,7 @@ modbus:
         
       # 0x0025
       - name: "Panasonic ERV Pressure Mode Status"
+        unique_id: panasonic_erv_pressure_mode_status
         slave: 1
         address: 37
         input_type: holding
@@ -87,6 +91,7 @@ modbus:
         
       # 0x0026
       - name: "Panasonic ERV Pressure Level Status"
+        unique_id: panasonic_erv_pressure_level_status
         slave: 1
         address: 38
         input_type: holding
@@ -197,4 +202,5 @@ template:
         icon: mdi:air-filter
         state: >
           {% set hours = states('sensor.panasonic_supply_filter_change_remaining_hours') | float(0) %}
+
           {{ (hours / 24) | round(0) | int }}
