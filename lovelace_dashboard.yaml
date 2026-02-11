@@ -146,7 +146,7 @@ views:
               columns: 6
               rows: 1
           - type: custom:mushroom-entity-card
-            entity: sensor.panasonic_filter_clean_remaining_2
+            entity: sensor.panasonic_filter_clean_remaining
             name: 滤网清洁剩余
             icon: mdi:broom
             fill_container: true
@@ -167,7 +167,7 @@ views:
               - entity: sensor.panasonic_pre_filter_change_remaining
                 name: 初效滤网更换剩余
                 icon: mdi:air-filter
-              - entity: sensor.panasonic_filter_change_remaining_2
+              - entity: sensor.panasonic_filter_change_remaining
                 name: 新风集尘滤网更换剩余
                 icon: mdi:air-filter
               - entity: sensor.panasonic_supply_filter_change_remaining
@@ -187,9 +187,9 @@ views:
                 icon: mdi:alert-circle-outline
             visibility:
               - condition: numeric_state
-                entity: input_select.panasonic_erv_mode
-                above: 0
-                below: 0
+                entity: sensor.panasonic_erv_error_code  
+                above: 0 
             grid_options:
               rows: auto
+
         column_span: 1
