@@ -89,8 +89,6 @@
           {% elif level == '强' %}3
           {% else %}2{% endif %}
 
-# ===== 设备到UI的同步自动化（保留原版的详细保护）=====
-
 - alias: Panasonic ERV Sync Status from Device
   trigger:
     - platform: state
@@ -201,3 +199,4 @@
                   {% elif val == 2 %}中
                   {% elif val == 3 %}强
                   {% else %}中{% endif %}
+
